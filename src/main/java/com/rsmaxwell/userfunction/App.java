@@ -59,11 +59,18 @@ public class App {
 		CommandLine line = getCommandLine(args);
 
 		try {
-			UserFunction userfunction = new UserFunction();
-			userfunction.load();
+			UserFunction userfunction = UserFunction.load();
 
-			double time = 5.5;
-			double value = userfunction.calculate(time);
+			System.out.println("  time          value");
+			System.out.println("---------------------");
+
+			for (int i = 0; i < 10; i++) {
+				double time = i / 10.0;
+				double value = userfunction.calculate(time);
+
+				System.out.printf("%6.1f     %10.4f\n", time, value);
+			}
+			System.out.printf("");
 
 		} catch (AppException e) {
 			System.out.println(e.getMessage());

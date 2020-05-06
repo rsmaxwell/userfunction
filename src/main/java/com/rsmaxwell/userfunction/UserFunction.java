@@ -18,8 +18,6 @@ public class UserFunction {
 	}
 
 	public double calculate(double time) throws Exception {
-		System.out.println("HelloWorld");
-
 		return 0;
 	}
 }
