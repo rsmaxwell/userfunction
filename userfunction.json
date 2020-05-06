@@ -2,18 +2,13 @@
    "intervals":[ 
       { 
          "start": 0,
-         "end": 1,
-         "function":"1 + 2 * x"
+         "end": 5,
+         "script":"8 - 2 * t"
       }, 
       { 
-         "start": 1,
-         "end": 2,
-         "function":"5 - 6 * x"
-      }, 
-      { 
-         "start": 3,
-         "end": 4,
-         "function":"42.1"
+         "start": 5,
+         "end": 10,
+         "script":"Math.pow(t, 2);"
       }
    ]
 }

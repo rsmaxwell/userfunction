@@ -65,7 +65,7 @@ public class App {
 			System.out.println("---------------------");
 
 			for (int i = 0; i < 10; i++) {
-				double time = i / 10.0;
+				double time = i;
 				double value = userfunction.calculate(time);
 
 				System.out.printf("%6.1f     %10.4f\n", time, value);

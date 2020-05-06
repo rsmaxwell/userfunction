@@ -7,6 +7,10 @@
 	<artifactId>user-function</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
+    <properties>
+        <groovyVersion>3.0.3</groovyVersion>
+    </properties>
+    
 	<build>
 		<plugins>
 			<plugin>
@@ -28,9 +32,9 @@
 			<version>1.4</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.5.12</version>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy</artifactId>
+			<version>${groovyVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
