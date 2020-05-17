@@ -56,6 +56,12 @@ public class App {
 
 	public static void main(String[] args) throws Exception {
 
+		try {
+			System.setSecurityManager(new MySecurityManager());
+		} catch (SecurityException se) {
+			System.out.println("SecurityManager already set!");
+		}
+
 		CommandLine line = getCommandLine(args);
 
 		try {
