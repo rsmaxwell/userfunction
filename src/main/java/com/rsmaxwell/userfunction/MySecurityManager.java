@@ -17,7 +17,7 @@ public class MySecurityManager extends SecurityManager {
 	@Override
 	public void checkRead(FileDescriptor filedescriptor) {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not a Chance!");
+			throw new SecurityException(filedescriptor.toString());
 	}
 
 	@Override
@@ -28,19 +28,19 @@ public class MySecurityManager extends SecurityManager {
 	@Override
 	public void checkRead(String filename, Object executionContext) {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Forget It!");
+			throw new SecurityException(filename + ", " + executionContext.toString());
 	}
 
 	@Override
 	public void checkWrite(FileDescriptor filedescriptor) {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not!");
+			throw new SecurityException(filedescriptor.toString());
 	}
 
 	@Override
 	public void checkWrite(String filename) {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not Even!");
+			throw new SecurityException(filename);
 	}
 
 	private static Set<String> allowedPermissions = new HashSet<String>();
@@ -87,15 +87,6 @@ public class MySecurityManager extends SecurityManager {
 		allowedPermissions.add("(\"java.lang.RuntimePermission\" \"localeServiceProvider\")");
 		allowedPermissions.add("(\"java.util.PropertyPermission\" \"jdk.security.legacyDSAKeyPairGenerator\" \"read\")");
 		allowedPermissions.add("(\"java.util.PropertyPermission\" \"java.security.egd\" \"read\")");
-		allowedPermissions.add("xxxxx");
-		allowedPermissions.add("xxxxx");
-		allowedPermissions.add("xxxxx");
-		allowedPermissions.add("xxxxx");
-		allowedPermissions.add("xxxxx");
-		allowedPermissions.add("xxxxx");
-		allowedPermissions.add("xxxxx");
-		allowedPermissions.add("xxxxx");
-		allowedPermissions.add("xxxxx");
 	}
 
 	@Override
@@ -110,19 +101,14 @@ public class MySecurityManager extends SecurityManager {
 				return;
 			}
 
-			try {
-				super.checkPermission(perm);
-			} catch (Throwable t) {
-				// System.out.println("MySecurityManager.checkPermission: " + key);
-				throw t;
-			}
+			super.checkPermission(perm);
 		}
 	}
 
 	@Override
 	public void checkPermission(Permission perm, Object context) {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not Even!");
+			throw new SecurityException(perm.toString() + ", " + context.toString());
 	}
 
 	@Override
@@ -140,61 +126,61 @@ public class MySecurityManager extends SecurityManager {
 	@Override
 	public void checkExit(int status) {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not Even!");
+			throw new SecurityException(Integer.toString(status));
 	}
 
 	@Override
 	public void checkExec(String cmd) {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not Even!");
+			throw new SecurityException(cmd);
 	}
 
 	@Override
 	public void checkLink(String lib) {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not Even!");
+			throw new SecurityException(lib);
 	}
 
 	@Override
 	public void checkDelete(String file) {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not Even!");
+			throw new SecurityException(file);
 	}
 
 	@Override
 	public void checkConnect(String host, int port) {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not Even!");
+			throw new SecurityException(host + ":" + port);
 	}
 
 	@Override
 	public void checkConnect(String host, int port, Object context) {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not Even!");
+			throw new SecurityException(host + ":" + port + ", context" + context.toString());
 	}
 
 	@Override
 	public void checkListen(int port) {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not Even!");
+			throw new SecurityException(Integer.toString(port));
 	}
 
 	@Override
 	public void checkAccept(String host, int port) {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not Even!");
+			throw new SecurityException(host + ":" + port);
 	}
 
 	@Override
 	public void checkMulticast(InetAddress maddr) {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not Even!");
+			throw new SecurityException(maddr.toString());
 	}
 
 	@Override
 	public void checkMulticast(InetAddress maddr, byte ttl) {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not Even!");
+			throw new SecurityException(maddr.toString() + ", ttl:" + Byte.toString(ttl));
 	}
 
 	@Override
@@ -241,19 +227,14 @@ public class MySecurityManager extends SecurityManager {
 				return;
 			}
 
-			try {
-				super.checkPropertyAccess(key);
-			} catch (Throwable t) {
-				System.out.println("MySecurityManager.checkPropertyAccess: " + key);
-				throw t;
-			}
+			super.checkPropertyAccess(key);
 		}
 	}
 
 	@Override
 	public void checkPrintJobAccess() {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not Even!");
+			throw new SecurityException();
 	}
 
 	@Override
@@ -264,19 +245,33 @@ public class MySecurityManager extends SecurityManager {
 	@Override
 	public void checkPackageDefinition(String pkg) {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not Even!");
+			throw new SecurityException(pkg);
 	}
 
 	@Override
 	public void checkSetFactory() {
 		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not Even!");
+			throw new SecurityException();
+	}
+
+	private static Set<String> allowedSecurityAccess = new HashSet<String>();
+
+	static {
+		allowedSecurityAccess.add("putProviderProperty.SUN");
 	}
 
 	@Override
 	public void checkSecurityAccess(String target) {
-		if (mode == SecurityMode.LOCKDOWN)
-			throw new SecurityException("Not Even!");
+
+		if (mode == SecurityMode.LOCKDOWN) {
+
+			boolean found = allowedSecurityAccess.contains(target);
+			if (found) {
+				return;
+			}
+
+			super.checkSecurityAccess(target);
+		}
 	}
 
 	@Override
