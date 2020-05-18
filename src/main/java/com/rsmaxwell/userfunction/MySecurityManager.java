@@ -5,7 +5,6 @@ import java.net.InetAddress;
 import java.security.Permission;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MySecurityManager extends SecurityManager {
@@ -24,28 +23,14 @@ public class MySecurityManager extends SecurityManager {
 		String groovyJar = null;
 		Pattern groovyPattern = Pattern.compile(".*groovy-[0-9]+\\.[0-9]+\\.[0-9]\\.jar");
 
-		String gsonJar = null;
-		Pattern gsonPattern = Pattern.compile(".*gson-[0-9]+\\.[0-9]+\\.[0-9]\\.jar");
-
 		for (String item : array) {
-
-			Matcher groovyMatcher = groovyPattern.matcher(item);
-			if (groovyMatcher.matches()) {
+			if (groovyPattern.matcher(item).matches()) {
 				groovyJar = item;
-			}
-
-			Matcher gsonMatcher = gsonPattern.matcher(item);
-			if (gsonMatcher.matches()) {
-				gsonJar = item;
 			}
 		}
 
 		if (groovyJar == null) {
 			throw new Exception("Could not find the groovy jar in the classpath");
-		}
-
-		if (gsonJar == null) {
-			throw new Exception("Could not find the gson jar in the classpath");
 		}
 
 		// @formatter:off
