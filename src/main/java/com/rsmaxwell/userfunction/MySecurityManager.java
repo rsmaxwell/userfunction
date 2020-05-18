@@ -20,8 +20,9 @@ public class MySecurityManager extends SecurityManager {
 		String classpath = System.getProperty("java.class.path");
 		String[] array = classpath.split(PS);
 
-		String groovyJar = null;
 		Pattern groovyPattern = Pattern.compile(".*groovy-[0-9]+\\.[0-9]+\\.[0-9]\\.jar");
+
+		String groovyJar = null;
 
 		for (String item : array) {
 			if (groovyPattern.matcher(item).matches()) {
