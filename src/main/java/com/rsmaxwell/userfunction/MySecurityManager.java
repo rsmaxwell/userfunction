@@ -5,10 +5,81 @@ import java.net.InetAddress;
 import java.security.Permission;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MySecurityManager extends SecurityManager {
 
 	private SecurityMode mode = SecurityMode.OPEN;
+
+	private Set<String> allowedPermissions = new HashSet<String>();
+
+	public MySecurityManager() throws Exception {
+
+		// find the path of the groovy jar
+		String PS = System.getProperty("path.separator");
+		String classpath = System.getProperty("java.class.path");
+		String[] array = classpath.split(PS);
+
+		String groovyJar = null;
+		Pattern groovyPattern = Pattern.compile(".*groovy-[0-9]+\\.[0-9]+\\.[0-9]\\.jar");
+
+		String gsonJar = null;
+		Pattern gsonPattern = Pattern.compile(".*gson-[0-9]+\\.[0-9]+\\.[0-9]\\.jar");
+
+		for (String item : array) {
+
+			Matcher groovyMatcher = groovyPattern.matcher(item);
+			if (groovyMatcher.matches()) {
+				groovyJar = item;
+			}
+
+			Matcher gsonMatcher = gsonPattern.matcher(item);
+			if (gsonMatcher.matches()) {
+				gsonJar = item;
+			}
+		}
+
+		if (groovyJar == null) {
+			throw new Exception("Could not find the groovy jar in the classpath");
+		}
+
+		if (gsonJar == null) {
+			throw new Exception("Could not find the gson jar in the classpath");
+		}
+
+		// @formatter:off
+		allowedPermissions.add("(\"java.lang.RuntimePermission\" \"accessDeclaredMembers\")");
+		allowedPermissions.add("(\"java.lang.RuntimePermission\" \"accessSystemModules\")");
+		allowedPermissions.add("(\"java.io.FilePermission\" \"" + groovyJar + "\" \"read\")");
+		allowedPermissions.add("(\"java.util.logging.LoggingPermission\" \"control\")");
+		allowedPermissions.add("(\"java.lang.RuntimePermission\" \"shutdownHooks\")");
+		allowedPermissions.add("(\"java.lang.RuntimePermission\" \"setContextClassLoader\")");
+		allowedPermissions.add("(\"java.lang.RuntimePermission\" \"getProtectionDomain\")");
+		allowedPermissions.add("(\"java.lang.RuntimePermission\" \"getClassLoader\")");
+		allowedPermissions.add("(\"java.lang.reflect.ReflectPermission\" \"suppressAccessChecks\")");
+		allowedPermissions.add("(\"java.lang.RuntimePermission\" \"createSecurityManager\")");
+		allowedPermissions.add("(\"groovy.security.GroovyCodeSourcePermission\" \"/groovy/shell\")");
+		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.1\")");
+		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.2\")");
+		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.3\")");
+		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.4\")");
+		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.5\")");
+		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.6\")");
+		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.7\")");
+		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.8\")");
+		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.9\")");
+		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.10\")");
+		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.11\")");
+		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.12\")");
+		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.13\")");
+		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.14\")");
+		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.jdk.security.provider.preferred\")");
+		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.securerandom.source\")");
+		allowedPermissions.add("(\"java.util.PropertyPermission\" \"jdk.security.legacyDSAKeyPairGenerator\" \"read\")");
+		allowedPermissions.add("(\"java.util.PropertyPermission\" \"java.security.egd\" \"read\")");
+		// @formatter:on		
+	}
 
 	public void setSecurityMode(SecurityMode mode) {
 		this.mode = mode;
@@ -41,52 +112,6 @@ public class MySecurityManager extends SecurityManager {
 	public void checkWrite(String filename) {
 		if (mode == SecurityMode.LOCKDOWN)
 			throw new SecurityException(filename);
-	}
-
-	private static Set<String> allowedPermissions = new HashSet<String>();
-
-	static {
-		allowedPermissions.add("(\"java.io.FilePermission\" \"userfunction.json\" \"read\")");
-		allowedPermissions.add("(\"java.lang.RuntimePermission\" \"accessClassInPackage.sun.misc\")");
-		allowedPermissions.add("(\"java.lang.RuntimePermission\" \"accessDeclaredMembers\")");
-		allowedPermissions.add("(\"java.lang.RuntimePermission\" \"accessSystemModules\")");
-		allowedPermissions.add(
-				"(\"java.io.FilePermission\" \"C:\\Users\\Richard\\.m2\\repository\\org\\codehaus\\groovy\\groovy\\3.0.3\\groovy-3.0.3.jar\" \"read\")");
-		allowedPermissions.add(
-				"(\"java.io.FilePermission\" \"C:\\Users\\Richard\\.m2\\repository\\com\\google\\code\\gson\\gson\\2.8.6\\gson-2.8.6.jar\" \"read\")");
-		allowedPermissions.add(
-				"(\"java.io.FilePermission\" \"C:\\Users\\Richard\\git\\github.com\\rsmaxwell\\userfunction\\target\\classes\\org\\codehaus\\groovy\\runtime\\DefaultGroovyMethods$1.class\" \"read\")");
-		allowedPermissions.add("(\"java.util.logging.LoggingPermission\" \"control\")");
-		allowedPermissions.add("(\"java.lang.RuntimePermission\" \"shutdownHooks\")");
-		allowedPermissions.add("(\"java.lang.RuntimePermission\" \"setContextClassLoader\")");
-		allowedPermissions.add("(\"java.lang.RuntimePermission\" \"getProtectionDomain\")");
-		allowedPermissions.add("(\"java.lang.RuntimePermission\" \"getClassLoader\")");
-		allowedPermissions.add("(\"java.lang.reflect.ReflectPermission\" \"suppressAccessChecks\")");
-		allowedPermissions.add(
-				"(\"java.io.FilePermission\" \"C:\\Users\\Richard\\git\\github.com\\rsmaxwell\\userfunction\\target\\classes\\META-INF\\services\\org.codehaus.groovy.runtime.ExtensionModule\" \"read\")");
-		allowedPermissions.add(
-				"(\"java.io.FilePermission\" \"C:\\Users\\Richard\\git\\github.com\\rsmaxwell\\userfunction\\target\\classes\\META-INF\\groovy\\org.codehaus.groovy.runtime.ExtensionModule\" \"read\")");
-		allowedPermissions.add("(\"java.lang.RuntimePermission\" \"createSecurityManager\")");
-		allowedPermissions.add("(\"groovy.security.GroovyCodeSourcePermission\" \"/groovy/shell\")");
-		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.1\")");
-		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.2\")");
-		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.3\")");
-		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.4\")");
-		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.5\")");
-		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.6\")");
-		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.7\")");
-		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.8\")");
-		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.9\")");
-		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.10\")");
-		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.11\")");
-		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.12\")");
-		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.13\")");
-		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.security.provider.14\")");
-		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.jdk.security.provider.preferred\")");
-		allowedPermissions.add("(\"java.security.SecurityPermission\" \"getProperty.securerandom.source\")");
-		allowedPermissions.add("(\"java.lang.RuntimePermission\" \"localeServiceProvider\")");
-		allowedPermissions.add("(\"java.util.PropertyPermission\" \"jdk.security.legacyDSAKeyPairGenerator\" \"read\")");
-		allowedPermissions.add("(\"java.util.PropertyPermission\" \"java.security.egd\" \"read\")");
 	}
 
 	@Override

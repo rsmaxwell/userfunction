@@ -7,10 +7,10 @@
 	<artifactId>user-function</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-    <properties>
-        <groovyVersion>3.0.3</groovyVersion>
-    </properties>
-    
+	<properties>
+		<groovyVersion>3.0.3</groovyVersion>
+	</properties>
+
 	<build>
 		<plugins>
 			<plugin>
