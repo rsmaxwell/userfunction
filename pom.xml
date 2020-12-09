@@ -8,7 +8,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
-		<groovyVersion>3.0.3</groovyVersion>
+		<groovyVersion>3.0.7</groovyVersion>
 	</properties>
 
 	<build>
